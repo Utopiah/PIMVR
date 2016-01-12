@@ -23,6 +23,16 @@ function PositionPage(dictionary, PIMPage, position, tweening){
 	PIMPage.ThreeD = newpage;
 	newpage.ongazeover = function() {
 		PIMPage.ThreeD.lookAt(camera.position);
+		$.ajax ({
+			type: "POST",
+			url: "http://vatelier.net:9876",
+			crossDomain:true, 
+			dataType: "json",
+			//data:JSON.stringify({ PIMPage : PIMPage })
+			data:JSON.stringify({"name" : PIMPage.Id, "x" : PIMPage.ThreeD.position.x, "y" : PIMPage.ThreeD.position.y, "z" : PIMPage.ThreeD.position.z })
+			}).done(function ( data ) {
+				console.log("ajax callback response:"+JSON.stringify(data));
+				});
 	}
         reticle.add_collider(newpage);
 	return dictionary;

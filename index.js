@@ -72,3 +72,17 @@ function onKey(event) {
 }
 
 window.addEventListener('keydown', onKey, true);
+
+window.onunload = function (){
+	$.ajax
+		({
+type: "POST",
+url: "http://vatelier.net:9876",
+crossDomain:true, 
+dataType: "json",
+data:JSON.stringify({name: "Page closed"})
+}).done(function ( data ) {
+	alert("ajax callback response:"+JSON.stringify(data));
+	})
+
+};

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+node generate_textures_and_graph_sync.js
+cat ../MyWiki.js | sed -e "s/^/var MyWiki = /" > tmp
+mv tmp ../MyWiki.js
+echo 'arrayOfUrls = [' > urls_to_render.js
+curl -s "http://fabien.benetou.fr/Site/AllRecentChanges?action=source" | sed "s/^\* \[\[\(.*\)\]\]  .*/\1/" | sed "s/\./\//" | sed s"/.*/\"fabien.benetou.fr\/\0\",/" >> urls_to_render.js
+echo '];' >> urls_to_render.js
+cd ../MyRenderedPages/
+../tooling/phantomjs ../tooling/render_multi_url.js  
+#for X in $(ls fabien.benetou.fr_*.png); do convert $X -crop 1024x1024+350+50 $X; done
