@@ -9,7 +9,7 @@ function PositionPage(dictionary, PIMPage, position, tweening){
 				Math.random() * 2 * (-boundary) + boundary);
 	}
 	var mygeometry = new THREE.CubeGeometry(pagesize, pagesize, pagesize * PIMPage.Rev / 100);
-	var textureUrl = "../MyRenderedPages/fabien.benetou.fr_" + PIMPage.Id.replace(".", "_") + ".png";
+	var textureUrl = "./MyRenderedPages/fabien.benetou.fr_" + PIMPage.Id.replace(".", "_") + ".png";
 	var mytexture = THREE.ImageUtils.loadTexture(textureUrl);
 	// consider instead http://threejs.org/docs/#Reference/Loaders/TextureLoader
 	var mymaterial = new THREE.MeshBasicMaterial({map: mytexture, transparent: false, opacity: 0.2, });
