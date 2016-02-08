@@ -9,7 +9,8 @@ function PositionPage(dictionary, PIMPage, position, tweening){
 				Math.random() * 2 * (-boundary) + boundary);
 	}
 	var mygeometry = new THREE.CubeGeometry(pagesize, pagesize, pagesize * PIMPage.Rev / 100);
-	var mytexture = THREE.ImageUtils.loadTexture("../MyRenderedPages/fabien.benetou.fr_" + PIMPage.Id.replace(".", "_") + ".png");
+	var textureUrl = "../MyRenderedPages/fabien.benetou.fr_" + PIMPage.Id.replace(".", "_") + ".png";
+	var mytexture = THREE.ImageUtils.loadTexture(textureUrl);
 	// consider instead http://threejs.org/docs/#Reference/Loaders/TextureLoader
 	var mymaterial = new THREE.MeshBasicMaterial({map: mytexture, transparent: false, opacity: 0.2, });
 	newpage = new THREE.Mesh( mygeometry, mymaterial );
@@ -25,7 +26,7 @@ function PositionPage(dictionary, PIMPage, position, tweening){
 		PIMPage.ThreeD.lookAt(camera.position);
 		$.ajax ({
 			type: "POST",
-			url: "http://vatelier.net:9876",
+			url: "//vatelier.net:9876",
 			crossDomain:true, 
 			dataType: "json",
 			//data:JSON.stringify({ PIMPage : PIMPage })
