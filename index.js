@@ -1,3 +1,5 @@
+var socket = new WebSocket("ws://vatelier.net:9876");
+
 // Setup three.js WebGL renderer. Note: Antialiasing is a big performance hit.
 // Only enable it if you actually need to.
 var renderer = new THREE.WebGLRenderer({antialias: true});
@@ -73,16 +75,45 @@ function onKey(event) {
 
 window.addEventListener('keydown', onKey, true);
 
-window.onunload = function (){
-	$.ajax
-		({
-type: "POST",
-url: "http://vatelier.net:9876",
-crossDomain:true, 
-dataType: "json",
-data:JSON.stringify({name: "Page closed"})
-}).done(function ( data ) {
-	alert("ajax callback response:"+JSON.stringify(data));
-	})
+var lookedAtPage = false;
+var lastKeyPressed = []
 
+socket.onopen = function(){
+        //socket.send(JSON.stringify({uuid: playerUuid, color: playerColor, position: camera.position}));
+        socket.send(JSON.stringify({action:"Viewer connected"}));
 };
+socket.onmessage = function(msg){
+        console.log('data:', msg.data);
+
+        if (msg.data == "down button pressed "){
+		lastKeyPressed.push({time: Date.now(), key: "down"});
+                camera.position.x += 0.2;
+        }
+        if (msg.data == "up button pressed "){
+		lastKeyPressed.push({time: Date.now(), key: "up"});
+                camera.position.x -= 0.2;
+        }
+        if (msg.data == "select button pressed "){
+		//camera.position.z += 0.2;
+		lastKeyPressed.push({time: Date.now(), key: "select"});
+		console.log('Selecting page ', lookedAtPage);
+		if (lookedAtPage){
+			console.log('Selecting page ', lookedAtPage);
+		}
+        }
+        if (msg.data.indexOf("Tap event") !=-1) {
+                camera.position.z -= 0.5;
+        }
+        if (msg.data.indexOf("ViewUpate") != -1) {
+		// assume JSON
+		json = JSON.parse(msg.data);
+		pagename = json.ViewUpdate;
+		views = json.value;
+		console.log(pagename, views);
+		//page = dictionary[pagename]... TODO
+		//scale the Y length of the viewindicator of the page updated
+        }
+};
+
+window.onunload = function (){ socket.send(JSON.stringify({action:"Viewer disconnected"})); };
+

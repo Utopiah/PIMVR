@@ -22,18 +22,26 @@ function PositionPage(dictionary, PIMPage, position, tweening){
 	}
 	scene.add(newpage);
 	PIMPage.ThreeD = newpage;
-	newpage.ongazeover = function() {
+	newpage.ongazeover = function(){
 		PIMPage.ThreeD.lookAt(camera.position);
-		$.ajax ({
-			type: "POST",
-			url: "//vatelier.net:9876",
-			crossDomain:true, 
-			dataType: "json",
-			//data:JSON.stringify({ PIMPage : PIMPage })
-			data:JSON.stringify({"name" : PIMPage.Id, "x" : PIMPage.ThreeD.position.x, "y" : PIMPage.ThreeD.position.y, "z" : PIMPage.ThreeD.position.z })
-			}).done(function ( data ) {
-				console.log("ajax callback response:"+JSON.stringify(data));
-				});
+		//socket.onopen = function(e) {
+		if (socket.readyState === 1) {
+			socket.send(JSON.stringify({"name" : PIMPage.Id,
+						"x" : PIMPage.ThreeD.position.x,
+						"y" : PIMPage.ThreeD.position.y,
+						"z" : PIMPage.ThreeD.position.z }));
+		}
+		if (lastKeyPressed.length>0){
+			//console.log(lastKeyPressed);
+			lasttiming = lastKeyPressed[lastKeyPressed.length-1].time;
+			console.log(lasttiming,'was it recent or not?');
+			now = Date.now();
+			if ((now - lasttiming) < 5000){
+				console.log(lastKeyPressed[lastKeyPressed.length-1].key, 'pressed less than 5 seconds ago');
+			}
+		}
+	}
+	newpage.ongazeout = function() {
 	}
         reticle.add_collider(newpage);
 	return dictionary;
@@ -60,6 +68,20 @@ function PositionPageJumpButton(dictionary, PIMPage) {
 		jumpbutton.scale.set(1,1,1);
         }
         reticle.add_collider(jumpbutton);
+	return PIMPage;
+}
+
+// Display an indicator representing the number of views
+function PositionPageViewIndicator(dictionary, PIMPage) {
+	var pageviews = 1; // PIMPage.pageviews
+	var pageproportion = pagesize/5;
+	var geometry = new THREE.CubeGeometry(pageproportion/5, pageproportion*pageviews, pageproportion); 
+	var material = new THREE.MeshBasicMaterial({color: 0x00DDDD, transparent: true, opacity: 0.5 });
+	var pageviewindicator = new THREE.Mesh(geometry, material);
+	pageviewindicator.position = PIMPage.ThreeD.position;
+	pageviewindicator.position.setX(-pagesize/2 - pagesize/10);
+	pageviewindicator.position.setY(pagesize/2 - pagesize/10);
+	PIMPage.ThreeD.add(pageviewindicator);
 	return PIMPage;
 }
 
@@ -103,6 +125,7 @@ function PositionPagesAsSphere(dictionary, startingkey, limit){
 		//PositionPage(dictionary, PIMPage, pageposition);
 		PositionPage(dictionary, PIMPage, pageposition, true);
 		PositionPageJumpButton(dictionary, PIMPage);
+		PositionPageViewIndicator(dictionary, PIMPage);
 	}
 }
 
