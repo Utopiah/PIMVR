@@ -71,6 +71,62 @@ function PositionPageJumpButton(dictionary, PIMPage) {
 	return PIMPage;
 }
 
+// add a button on the top right corner of a positionned page
+function PositionPageMoveButtons(dictionary, PIMPage) {
+	var pageproportion = pagesize/5;
+	var geometry = new THREE.CylinderGeometry(pageproportion, pageproportion/5, pageproportion, 32); 
+	var material = new THREE.MeshBasicMaterial({color: 0x00FFFF, transparent: true, opacity: 0.8 });
+	
+	var moveleftbutton = new THREE.Mesh(geometry, material);
+	moveleftbutton.position = PIMPage.ThreeD.position;
+	moveleftbutton.position.setX(pagesize/2 + pagesize/10);
+	moveleftbutton.position.setY( - pagesize/2 - pagesize/10);
+	moveleftbutton.position.x -= 0.2;
+	PIMPage.ThreeD.add(moveleftbutton);
+	moveleftbutton.rotateZ(-Math.PI/2);
+        moveleftbutton.ongazelong = function() { PIMPage.ThreeD.position.x += 0.1 }
+        moveleftbutton.ongazeover = function() { moveleftbutton.scale.set(1.2,1.2,1.2); }
+        moveleftbutton.ongazeout = function() { moveleftbutton.scale.set(1,1,1); }
+        reticle.add_collider(moveleftbutton);
+
+	var moverightbutton = new THREE.Mesh(geometry, material);
+	moverightbutton.position = PIMPage.ThreeD.position;
+	moverightbutton.position.setX(pagesize/2 + pagesize/10);
+	moverightbutton.position.setY( - pagesize/2 - pagesize/10);
+	moverightbutton.position.x += 0.2;
+	PIMPage.ThreeD.add(moverightbutton);
+	moverightbutton.rotateZ(Math.PI/2);
+        moverightbutton.ongazelong = function() { PIMPage.ThreeD.position.x -= 0.1 }
+        moverightbutton.ongazeover = function() { moverightbutton.scale.set(1.2,1.2,1.2); }
+        moverightbutton.ongazeout = function() { moverightbutton.scale.set(1,1,1); }
+        reticle.add_collider(moverightbutton);
+
+	var moveupbutton = new THREE.Mesh(geometry, material);
+	moveupbutton.position = PIMPage.ThreeD.position;
+	moveupbutton.position.setX(pagesize/2 + pagesize/10);
+	moveupbutton.position.setY( - pagesize/2 - pagesize/10);
+	moveupbutton.position.y += 0.2;
+	PIMPage.ThreeD.add(moveupbutton);
+	moveupbutton.rotateZ(Math.PI);
+        moveupbutton.ongazelong = function() { PIMPage.ThreeD.position.y += 0.1 }
+        moveupbutton.ongazeover = function() { moveupbutton.scale.set(1.2,1.2,1.2); }
+        moveupbutton.ongazeout = function() { moveupbutton.scale.set(1,1,1); }
+        reticle.add_collider(moveupbutton);
+
+	var movedownbutton = new THREE.Mesh(geometry, material);
+	movedownbutton.position = PIMPage.ThreeD.position;
+	movedownbutton.position.setX(pagesize/2 + pagesize/10);
+	movedownbutton.position.setY( - pagesize/2 - pagesize/10);
+	movedownbutton.position.y -= 0.2;
+	PIMPage.ThreeD.add(movedownbutton);
+        movedownbutton.ongazelong = function() { PIMPage.ThreeD.position.y -= 0.1 }
+        movedownbutton.ongazeover = function() { movedownbutton.scale.set(1.2,1.2,1.2); }
+        movedownbutton.ongazeout = function() { movedownbutton.scale.set(1,1,1); }
+        reticle.add_collider(movedownbutton);
+
+	return PIMPage;
+}
+
 // Display an indicator representing the number of views
 function PositionPageViewIndicator(dictionary, PIMPage) {
 	var pageviews = 1; // PIMPage.pageviews
@@ -126,6 +182,7 @@ function PositionPagesAsSphere(dictionary, startingkey, limit){
 		PositionPage(dictionary, PIMPage, pageposition, true);
 		PositionPageJumpButton(dictionary, PIMPage);
 		PositionPageViewIndicator(dictionary, PIMPage);
+		PositionPageMoveButtons(dictionary, PIMPage);
 	}
 }
 
